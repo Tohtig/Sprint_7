@@ -32,40 +32,43 @@ public class CourierTest {
 //    }
 
     @Test
+//    нельзя создать двух одинаковых курьеров
     public void createIdenticalAccountsForbidden() {
         ValidatableResponse createFirst = steps.create(courierAccount);
         int statusCode;
         statusCode = createFirst.extract().statusCode();
         assertThat("Статус код должен быть 201", statusCode, equalTo(HttpStatus.SC_CREATED));
-        courierId = steps.login(courierAccount);
+        courierId = steps.getAccountId(courierAccount);
         ValidatableResponse createSecond = steps.create(courierAccount);
         statusCode = createSecond.extract().statusCode();
-        //не работает ??? statusCode - не переопределили, но assertNotEquals не отбросил
         assertNotEquals("Статус код не должен быть 201", statusCode, equalTo(HttpStatus.SC_CREATED));
     }
 
     @Test
-    public void createNewCourierReturnSC_CREATED(){
+//    запрос возвращает правильный код ответа
+    public void createNewCourierReturnSC_CREATED() {
         ValidatableResponse response = steps.create(courierAccount);
-        courierId = steps.login(courierAccount);
+        courierId = steps.getAccountId(courierAccount);
         assertThat("Статус код должен быть 201", response.extract().statusCode(), equalTo(HttpStatus.SC_CREATED));
     }
 
     @Test
-    public void createNewCourierReturnBodyWithOk(){
+//    успешный запрос возвращает ok: true
+    public void createNewCourierReturnBodyWithOk() {
         ValidatableResponse response = steps.create(courierAccount);
-        courierId = steps.login(courierAccount);
+        courierId = steps.getAccountId(courierAccount);
         boolean expected = true;
         boolean actual = response.extract().body().jsonPath().getBoolean("ok");
         assertEquals("Статус код должен быть 201", expected, actual);
     }
 
     @Test
+//    если создать пользователя с логином, который уже есть, возвращается ошибка
     public void createIdenticalLoginForbidden() {
         ValidatableResponse createFirst = steps.create(courierAccount);
         int statusCode = createFirst.extract().statusCode();
         assertThat("Статус код должен быть 201", statusCode, equalTo(HttpStatus.SC_CREATED));
-        courierId = steps.login(courierAccount);
+        courierId = steps.getAccountId(courierAccount);
         CourierAccount courierSecondAccount = new CourierAccount(courierAccount.getLogin(), faker.internet().password(), faker.name().firstName());
         ValidatableResponse createSecond = steps.create(courierSecondAccount);
         statusCode = createSecond.extract().statusCode();
@@ -73,6 +76,7 @@ public class CourierTest {
     }
 
     @Test
+//    если одного из полей нет, запрос возвращает ошибку
     public void createFieldlessReturnsError() {
         courierAccount = new CourierAccount();
         courierAccount.setLogin(faker.funnyName().name());
