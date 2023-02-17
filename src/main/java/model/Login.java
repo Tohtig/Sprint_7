@@ -13,7 +13,7 @@ public class Login {
     private String login;
     private String password;
 
-    public Login(CourierAccount account){
+    public Login(CourierAccount account) {
         this.login = account.getLogin();
         this.password = account.getPassword();
     }
