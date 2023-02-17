@@ -5,15 +5,12 @@ import io.restassured.response.ValidatableResponse;
 import model.CourierAccount;
 import model.Login;
 import model.Order;
+import org.apache.http.HttpStatus;
+
+import java.util.List;
 
 public class Steps extends BaseHttpClient {
     private final String baseUrl = "https://qa-scooter.praktikum-services.ru/api/v1";
-
-    @Step("Получение id курьера")
-    public int getAccountId(CourierAccount account) {
-        Login body = new Login(account);
-        return doPostRequest(baseUrl + "/courier/login", body).extract().body().jsonPath().getInt("id");
-    }
 
     @Step("Авторизация курьера в системе")
     public ValidatableResponse login(CourierAccount account) {
@@ -26,9 +23,17 @@ public class Steps extends BaseHttpClient {
         return doPostRequest(baseUrl + "/courier", account);
     }
 
-    @Step("Удаление курьера")
-    public void delete(int id) {
-        doDeleteRequest(baseUrl + String.format("/courier/%d", id));
+    @Step("Удаление курьеров")
+    public void delete(List<CourierAccount> accounts) {
+        ValidatableResponse loginResp;
+        if(!accounts.isEmpty()) {
+            for (CourierAccount account: accounts) {
+                loginResp = login(account);
+                if (loginResp.extract().statusCode() == HttpStatus.SC_OK) {
+                    doDeleteRequest(baseUrl + String.format("/courier/%d", loginResp.extract().body().jsonPath().getInt("id")));
+                }
+            }
+        }
     }
 
     @Step("Создание заказа")

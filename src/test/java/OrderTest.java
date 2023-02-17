@@ -14,13 +14,13 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(JUnitParamsRunner.class)
-public class OrderTests {
+public class OrderTest {
 
     private final Steps steps = new Steps();
     private final HashSet<String> colors;
     private ValidatableResponse response;
 
-    public OrderTests() {
+    public OrderTest() {
         colors = new HashSet<>();
         colors.add("BLACK");
         colors.add("GREY");
