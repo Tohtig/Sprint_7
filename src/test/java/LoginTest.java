@@ -25,10 +25,11 @@ public class LoginTest {
     private final Faker faker = new Faker(new Locale("en"));
     private final Steps steps = new Steps();
     private CourierAccount account;
-    private List<CourierAccount> testData = new ArrayList<>();
+    private List<CourierAccount> testData;
 
     @Before
     public void setUp() {
+        testData = new ArrayList<>();
         account = new CourierAccount(faker.funnyName().name(), faker.internet().password(), faker.name().firstName());
         testData.add(account);
     }
